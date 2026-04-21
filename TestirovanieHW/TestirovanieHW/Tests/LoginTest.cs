@@ -8,10 +8,10 @@ public class LoginTest : TestBase
     {
         AccountData user = new AccountData("321ба", "P+hgL6!uABW8962");
 
-        OpenHomePage();
-        OpenLoginPage();
-        Login(user);
+        app.Navigation.OpenHomePage();
+        app.Navigation.OpenLoginPage();
+        app.Auth.Login(user);
 
-        Assert.IsTrue(driver.PageSource.Contains("Выход"));
+        Assert.IsTrue(app.Driver.PageSource.Contains("Выход"));
     }
 }
