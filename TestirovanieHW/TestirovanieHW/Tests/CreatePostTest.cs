@@ -1,23 +1,25 @@
-using OpenQA.Selenium;
+using System.Xml.Serialization;
 using OpenQA.Selenium.Support.UI;
 
 namespace SeleniumTests;
 
 [TestFixture]
-public class CreatePostTest : TestBase
+public class CreatePostTest : AuthBase
 {
-    [Test]
-    public void TheCreatePostTest()
+    public static IEnumerable<PostData> PostDataFromXmlFile()
     {
-        AccountData user = new AccountData("321ба", "P+hgL6!uABW8962");
-        PostData post = new PostData("Я думаю выиграет Бавария");
+        return (List<PostData>)new XmlSerializer(typeof(List<PostData>))
+            .Deserialize(new StreamReader("posts.xml"))!;
+    }
 
-        app.Navigation.OpenHomePage();
-        app.Navigation.OpenLoginPage();
-        app.Auth.Login(user);
-
+    [Test, TestCaseSource(nameof(PostDataFromXmlFile))]
+    public void TheCreatePostTest(PostData post)
+    {
         app.Navigation.OpenSection("Спорт");
         app.Navigation.OpenTopic("Лига Чемпионов 2025/2026");
+        
+        Thread.Sleep(15000);
+        
         app.Post.CreateReply(post);
         
         WebDriverWait wait = new WebDriverWait(app.Driver, TimeSpan.FromSeconds(10));

@@ -19,7 +19,10 @@ public class NavigationHelper : HelperBase
 
     public void OpenLoginPage()
     {
-        driver.FindElement(By.LinkText("Вход")).Click();
+        if (IsElementPresent(By.CssSelector("a[href*='ucp.php?mode=login']")))
+        {
+            driver.FindElement(By.CssSelector("a[href*='ucp.php?mode=login']")).Click();
+        }
     }
 
     public void OpenSection(string sectionName)

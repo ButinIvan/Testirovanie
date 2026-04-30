@@ -4,14 +4,24 @@ namespace SeleniumTests;
 public class LoginTest : TestBase
 {
     [Test]
-    public void TheLoginTest()
+    public void LoginWithValidData()
     {
-        AccountData user = new AccountData("321ба", "P+hgL6!uABW8962");
+        app.Auth.Logout();
 
-        app.Navigation.OpenHomePage();
-        app.Navigation.OpenLoginPage();
+        AccountData user = new AccountData(Settings.Login, Settings.Password);
         app.Auth.Login(user);
 
-        Assert.IsTrue(app.Driver.PageSource.Contains("Выход"));
+        Assert.IsTrue(app.Auth.IsLoggedIn(user.Username));
+    }
+
+    [Test]
+    public void LoginWithInvalidData()
+    {
+        app.Auth.Logout();
+    
+        AccountData user = new AccountData(Settings.Login, "wrong_password");
+        app.Auth.Login(user);
+
+        Assert.IsFalse(app.Auth.IsLoggedIn());
     }
 }

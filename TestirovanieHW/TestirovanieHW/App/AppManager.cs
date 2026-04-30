@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
@@ -7,22 +9,46 @@ public class AppManager
 {
     private IWebDriver driver;
     private string baseURL;
+    private static ThreadLocal<AppManager> app = new ThreadLocal<AppManager>();
 
     private NavigationHelper navigation;
     private LoginHelper auth;
     private PostHelper post;
 
-    public AppManager()
+    private AppManager()
     {
         driver = new ChromeDriver();
         driver.Manage().Window.Maximize();
         driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(120);
 
-        baseURL = "https://www.forum-phpbb.ru/";
+        baseURL = Settings.BaseURL;
 
         navigation = new NavigationHelper(this, baseURL);
         auth = new LoginHelper(this);
         post = new PostHelper(this);
+    }
+    
+    public static AppManager GetInstance()
+    {
+        if (!app.IsValueCreated)
+        {
+            AppManager newInstance = new AppManager();
+            newInstance.Navigation.OpenHomePage();
+            app.Value = newInstance;
+        }
+
+        return app.Value;
+    }
+    
+    ~AppManager()
+    {
+        try
+        {
+            driver.Quit();
+        }
+        catch (Exception)
+        {
+        }
     }
 
     public IWebDriver Driver
@@ -43,10 +69,5 @@ public class AppManager
     public PostHelper Post
     {
         get { return post; }
-    }
-
-    public void Stop()
-    {
-        driver.Quit();
     }
 }

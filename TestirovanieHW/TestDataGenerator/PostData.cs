@@ -1,11 +1,11 @@
-namespace SeleniumTests;
+namespace TestDataGenerator;
 
 public class PostData
 {
     public PostData()
     {
-        
     }
+
     public PostData(string message)
     {
         Message = message;
